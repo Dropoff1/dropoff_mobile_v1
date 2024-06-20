@@ -82,7 +82,7 @@ const Register = () => {
         Already a user? <Text className="text-[#00A651]">Login</Text>
       </Text>
 
-      <View className="absolute bottom-20">
+      <View className="absolute bottom-20 w-full">
         <Button_Lg
           title={"Continue"}
           onPress={() => router.replace("/auth/otp")}

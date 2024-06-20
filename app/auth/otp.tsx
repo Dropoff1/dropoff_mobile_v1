@@ -32,7 +32,7 @@ const OTP = () => {
       <Text
         className="w-fit text-lg"
         onPress={() => {
-          router.back();
+          router.replace('/auth/register');
         }}
       >
         Back
