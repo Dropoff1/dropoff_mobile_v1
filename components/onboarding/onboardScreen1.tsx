@@ -6,18 +6,12 @@ import {
   View,
   Text,
   Pressable,
+  TouchableOpacity,
+  Dimensions,
+  Easing,
 } from "react-native";
-import React, { useState } from "react";
-import {
-  ClipPath,
-  Defs,
-  G,
-  Path,
-  Svg,
-  Rect,
-  Stop,
-  LinearGradient,
-} from "react-native-svg";
+import React, { useEffect, useRef, useState } from "react";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
 
 import Button_Lg from "../shared/Button";
 import TermsOfServiceText from "../shared/TermsofService";
@@ -25,318 +19,215 @@ import { useRouter } from "expo-router";
 
 export default function OnboardScreen1() {
   const [activeTab, setActiveTab] = useState(0);
+  const [fill, setFill] = useState(0);
   const router = useRouter();
+  const width = Dimensions.get("window").width;
+  const height = Dimensions.get("window").height;
+  const circularProgressRef = useRef(null);
 
   const handleTabChange = (index: number) => {
     setActiveTab(index);
   };
 
+  useEffect(() => {
+    let timeoutId;
+
+    const startAnimation = async () => {
+      if (activeTab === 0 && circularProgressRef.current) {
+        circularProgressRef.current &&
+          circularProgressRef.current.animate(100, 10000, Easing.quad);
+
+        timeoutId = setTimeout(() => {
+          handleTabChange(1);
+        }, 10000);
+      }
+    };
+
+    startAnimation();
+
+    // Cleanup function
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [activeTab]);
+
   return (
     <View className="mt-16 px-[5%]">
       <View className="flex w-full flex-row justify-between relative">
         {activeTab === 1 ? (
-          <Pressable
+          <TouchableOpacity
             onPress={() => {
               handleTabChange(0);
             }}
           >
-            <Text className="w-fit text-lg">Back</Text>
-          </Pressable>
+            <Text className="w-fit text-lg font-medium">Back</Text>
+          </TouchableOpacity>
         ) : (
           <View className="flex flex-row w-full justify-end">
-            <Text className="w-fit text-lg text-end" onPress={() => {}}>
+            <Text
+              className="w-fit text-lg text-end font-medium"
+              onPress={() => {
+                router.push("/auth/register");
+              }}
+            >
               Skip
             </Text>
           </View>
         )}
       </View>
 
+      {/* <View className="h-[100vh]">
+        <Carousel
+          loop
+          width={width}
+          height={height}
+          autoPlay={false}
+          data={[...new Array(2).keys()]}
+          scrollAnimationDuration={3000}
+          // style={{height: 500}}
+          renderItem={({ index }) => (
+            <View className="h-[100vh]">
+              {index === 0 ? (
+                // First item
+                <View className="h-[100vh]">
+                  <View className="mb-0 pb-0 h-1/2 mt-4">
+                    <Image
+                      source={require("../../assets/images/bike.png")}
+                      style={{ resizeMode: "contain" }}
+                      className="w-[80%] h-full mx-auto mb-0 block"
+                    />
+                  </View>
+                  <Text className="text-2xl text-center font-semibold mt-0 w-[226px] mx-auto">
+                    Get your errands ran on time
+                  </Text>
+                  <View className="flex flex-row justify-center items-center mx-auto mt-8">
+                    <View className="block mr-2 h-[10px] w-[10px] rounded-full bg-slate-900" />
+                    <View className="block h-[10px] w-[10px] rounded-full bg-slate-200" />
+                  </View>
+                  <View className="absolute bottom-36 w-full">
+                    <Pressable
+                      onPress={() => {
+                        handleTabChange(1);
+                      }}
+                      className="w-[60px] h-[60px] rounded-full bg-black mx-auto flex flex-row items-center justify-center"
+                    >
+                      <Ionicons
+                        name="chevron-forward-outline"
+                        style={{ color: "white", fontSize: 30, margin: "auto" }}
+                      />
+                    </Pressable>
+                  </View>
+                </View>
+              ) : (
+                // Second item
+                <View className={"relative h-[100vh]"}>
+                  <View className="absolute top-0 bottom-0 my-0 w-full">
+                    <Image
+                      source={require("../../assets/images/image.png")}
+                      style={[{ resizeMode: "contain" }]}
+                      className="w-[80%] max-w-[400px]  mx-auto mb-0 -mt-4"
+                    />
+
+                    <Text className="text-2xl text-center font-semibold -mt-12 w-[226px] mx-auto">
+                      Get items from your favorite local stores
+                    </Text>
+                    <View className="flex flex-row justify-center items-center mx-auto mt-[32px]">
+                      <View className="block mr-2 h-[10px] w-[10px] rounded-full bg-slate-200" />
+                      <View className="block h-[10px] w-[10px] rounded-full bg-slate-900" />
+                    </View>
+                  </View>
+                  <View className="mt-8 absolute bottom-20 w-full">
+                    <Button_Lg
+                      title="Get Started"
+                      regular={true}
+                      onPress={() => {
+                        router.replace("/auth/register");
+                      }}
+                    />
+                    <TermsOfServiceText />
+                  </View>
+                </View>
+              )}
+            </View>
+          )}
+        />
+      </View> */}
+
       {/* Onbaord component 1 */}
-      <View className={activeTab === 0 ? "" : "hidden"}>
-        <View className="mt-24 mx-auto">
-          {/* <Image
-            source={require("../../assets/images/illustration.svg")}
+      <View className={activeTab === 0 ? " h-[100vh]" : "hidden"}>
+        <View className="mb-0 pb-0 h-1/2 mt-4">
+          <Image
+            source={require("../../assets/images/bike.png")}
             style={[{ resizeMode: "contain" }]}
-            className="w-full h-auto"
-          /> */}
-          <Svg width="218" height="225" viewBox="0 0 218 225" fill="none">
-            <Path
-              d="M96.141 152.017H43.4289V133.085C43.4289 124.944 50.0325 118.355 58.159 118.355H81.3816C89.5227 118.355 96.1117 124.958 96.1117 133.085V152.017H96.141Z"
-              fill="white"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M103.037 102.953C103.037 102.953 141.444 125.78 149.658 149.925C157.872 174.056 145.705 189.503 145.705 189.503L140.272 187.131C140.272 187.131 138.837 156.763 130.33 150.614C121.823 144.464 66.6363 127.083 91.4696 100.669L103.037 102.953Z"
-              fill="#111411"
-            />
-            <Path
-              d="M140.287 187.131C140.287 187.131 135.821 189.694 137.798 191.436C139.774 193.178 145.016 197.63 149.306 196.253C153.597 194.877 156.276 191.744 153.274 192.095C150.273 192.446 150.2 194.13 149.101 193.266C148.003 192.417 145.748 189.489 145.748 189.489L140.287 187.131Z"
-              fill="url(#paint0_linear_47_1938)"
-            />
-            <Path
-              d="M100.197 142.265C100.197 142.265 53.6203 141.328 48.2613 142.265C42.9022 143.202 33.824 145.677 28.011 157.303C22.198 168.929 15.7847 187.978 15.1844 191.185C14.5841 194.391 15.199 198.667 17.9957 198.667C20.7924 198.667 205.871 198.667 205.871 198.667H214.085C214.085 198.667 218.492 198.198 217.687 192.781C216.882 187.363 204.055 154.096 197.832 145.677C191.624 137.243 188.212 127.623 183.79 121.004C181.155 117.051 176 110.403 171.798 106.26C167.361 101.896 163.54 96.9618 160.421 91.5734C158.84 88.8646 157.17 86.7561 155.838 86.8733C152.163 87.1808 147.902 86.9904 147.829 92.0859C147.741 97.1814 163.218 119.599 165.795 123.01C168.372 126.422 181.799 158.298 182.004 159.104L169.367 177.348L168.064 179.207H99.5971C99.5971 179.207 92.5834 169.134 91.5731 162.31C90.5774 155.487 99.1871 148.503 100.798 146.584C102.408 144.681 103.038 143.305 100.197 142.265Z"
-              fill="#00A651"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M36.0639 198.682H90.1817C90.1817 198.682 91.3824 224.497 63.1228 224.497C34.8632 224.497 36.0639 198.682 36.0639 198.682Z"
-              fill="#111411"
-            />
-            <Path
-              d="M142.821 198.682H196.939C196.939 198.682 198.14 224.497 169.88 224.497C141.62 224.497 142.821 198.682 142.821 198.682Z"
-              fill="#111411"
-            />
-            <Path
-              d="M153.597 91.9976C153.597 91.9976 131.956 109.7 107.723 90.343C106.595 89.4352 105.453 88.4542 104.311 87.3853L113.272 66.9447C113.272 66.9447 114.034 71.6595 116.42 76.8868C119.378 83.3733 124.84 90.6505 134.416 90.5773C151.357 90.4602 150.112 87.5024 150.068 87.3853L153.597 91.9976Z"
-              fill="#7E532A"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M150.054 87.3706C150.054 87.3706 148.692 84.5154 150.391 84.5739C152.089 84.6325 153.729 86.741 153.041 86.8728C152.367 87.0045 150.654 85.9649 150.654 85.9649C150.654 85.9649 154.198 89.2302 153.583 91.9829L150.054 87.3706Z"
-              fill="url(#paint1_linear_47_1938)"
-            />
-            <Path
-              d="M116.42 76.8722C115.483 83.549 107.723 90.343 107.723 90.343C106.595 89.4352 105.453 88.4542 104.311 87.3853L113.272 66.9447C113.272 66.9447 114.034 71.6595 116.42 76.8722Z"
-              fill="#00A651"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M116.626 48.3637C116.5 47.5 112.482 31.4372 112.482 31.4372C112.482 31.4372 103.082 31.7593 104.56 39.5637C104.56 39.5637 104.678 40.9108 105.249 42.58C104.824 48.1001 97.2686 56.7976 97.2686 56.7976L107.547 59.9457L113.155 48.9201C114.18 48.8908 116.751 49.2273 116.626 48.3637Z"
-              fill="#7E532A"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M106.5 34C106.5 34 105.453 47.9145 102.846 49.4665C102.846 49.4665 102.871 46.5 100.936 46C99 45.5 100 43.7674 100 43C99.0109 40.0795 101.057 40.4205 106.5 34Z"
-              fill="#111411"
-            />
-            <Path
-              d="M108.049 37.1322C105.649 37.5322 108.049 35.6322 108.549 34.6322C108.716 34.4656 109.449 34.1322 111.049 34.1322C113.049 34.1322 114.549 33.1322 113.549 36.6322C112.549 40.1322 111.049 36.6322 108.049 37.1322Z"
-              fill="#111411"
-            />
-            <Path
-              d="M105.717 43.7516L104.561 39.5493C104.561 39.5493 102.496 40.1203 102.95 42.141C103.404 44.147 105.717 43.7516 105.717 43.7516Z"
-              fill="#7E532A"
-            />
-            <Path
-              d="M120.038 33.7507L119.847 32.9893L113.654 34.3071C113.361 32.9161 111.97 27.7913 107.723 27.9524C101.515 28.172 98.3085 34.1167 100.973 39.549L107.27 37.1331L120.038 33.7507Z"
-              fill="#00A651"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M94.9695 106.201C94.9695 106.201 77.5306 104.795 74.4118 99.656C74.4118 99.656 75.0268 94.1359 76.6521 86.8148C77.9992 80.7089 80.0637 73.3732 83.0654 66.9306C87.1945 58.0573 93.11 50.9266 101.427 51.234C101.427 51.234 111.237 54.6603 113.155 66.3449C115.059 78.0294 94.9695 106.201 94.9695 106.201Z"
-              fill="#00A651"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M104.707 56.9434C108.543 60.604 110.476 65.8313 110.095 71.1025C109.964 72.9474 109.773 75.0852 109.48 77.3255L90.4748 78.7311C90.0062 70.4436 91.7487 62.8736 93.4033 57.7195C97.181 52.0676 101.413 53.7954 104.707 56.9434Z"
-              fill="#00A651"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M149.322 98.6592C148.649 98.0589 149.278 96.1408 148.605 95.5551C147.917 94.9694 148.37 93.2563 147.785 92.8316C147.199 92.407 143.231 94.823 143.231 94.823C145.091 91.9531 142.601 88.1461 142.353 91.2795C142.089 94.413 140.171 97.3414 140.171 97.3414C140.171 97.3414 112.248 99.1571 109.788 88.6879C108.924 85.0273 109.012 81.0007 109.51 77.3108L90.5042 78.7165C90.6214 80.8982 90.8996 83.1238 91.3681 85.3787C95.0726 103.213 117.314 112.525 140.478 102.613C140.478 102.613 149.732 101.954 149.322 101.427C148.883 100.9 149.996 99.2596 149.322 98.6592Z"
-              fill="#7E532A"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M86.6375 102.001C86.6375 102.001 132.16 127.507 139.804 155.562C144.621 173.25 142.615 179.268 142.615 179.268H125.776C125.776 179.268 127.446 163.366 117.752 156.367C108.059 149.368 45.112 129.528 73.4448 99.409L86.6375 102.001Z"
-              fill="#111411"
-            />
-            <Path
-              d="M100.036 51.2634L102.466 49.5942L109.202 55.0411V60.5319L100.036 51.2634Z"
-              fill="white"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M151.547 101.12C156.141 101.12 159.864 97.3964 159.864 92.8031C159.864 88.2099 156.141 84.4863 151.547 84.4863C146.954 84.4863 143.231 88.2099 143.231 92.8031C143.231 97.3964 146.954 101.12 151.547 101.12Z"
-              fill="#111411"
-            />
-            <Path
-              d="M97.2686 108.676C108.807 116.861 117.49 124.607 123.551 130.493C131.019 137.741 134.577 142.265 137.315 148.064C140.214 154.199 141.283 159.822 141.722 163.629"
-              stroke="#00A651"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <Path
-              d="M75.8078 41.8373H61.2388C51.5895 41.8373 43.7559 34.0183 43.7559 24.3544V18.4829C43.7559 8.83361 51.5749 1 61.2388 1H75.8078C85.4571 1 93.2907 8.81897 93.2907 18.4829V24.3544C93.2907 34.0037 85.4571 41.8373 75.8078 41.8373Z"
-              fill="#FECD2C"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M77.9039 30.7947C83.0787 25.6198 83.0787 17.2296 77.9039 12.0547C72.729 6.87985 64.3388 6.87985 59.1639 12.0547C53.9891 17.2296 53.9891 25.6198 59.1639 30.7947C64.3388 35.9695 72.729 35.9695 77.9039 30.7947Z"
-              fill="white"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M76.276 19.9483L68.0324 20.6219V17.3274C68.0324 17.0638 67.8567 16.8149 67.5931 16.7563C67.2417 16.6831 66.9196 16.9613 66.9196 17.2981V21.2222C66.9196 21.2369 66.9196 21.2369 66.9196 21.2515C66.9196 21.2661 66.9196 21.2661 66.9196 21.2808C66.9196 21.2954 66.9196 21.3101 66.9196 21.3101C66.9196 21.3247 66.9196 21.3394 66.9342 21.354C66.9342 21.3686 66.9489 21.3979 66.9489 21.4126C66.9489 21.4272 66.9635 21.4419 66.9635 21.4565C66.9782 21.4711 66.9782 21.4858 66.9928 21.5004C67.0074 21.5151 67.0074 21.5297 67.0221 21.5444C67.0367 21.559 67.0514 21.5736 67.066 21.5883C67.0807 21.6029 67.0807 21.6176 67.0953 21.6176C67.1099 21.6322 67.1246 21.6468 67.1392 21.6615C67.1539 21.6761 67.1685 21.6761 67.1685 21.6908C67.1831 21.7054 67.1978 21.7054 67.2271 21.7201C67.2417 21.7201 67.2564 21.7347 67.271 21.7347C67.2856 21.7493 67.3149 21.7493 67.3442 21.7493C67.3589 21.7493 67.3735 21.764 67.3735 21.764C67.4028 21.764 67.4467 21.7786 67.476 21.7786C67.4906 21.7786 67.5053 21.7786 67.5199 21.7786L76.3492 21.0612C76.6128 21.0465 76.847 20.8415 76.8763 20.578C76.9056 20.2119 76.6128 19.9191 76.276 19.9483Z"
-              fill="#111411"
-            />
-            <Path
-              d="M186.584 83.6215H172.015C162.366 83.6215 154.533 75.8025 154.533 66.1386V60.267C154.533 50.6178 162.351 42.7842 172.015 42.7842H186.584C196.234 42.7842 204.067 50.6031 204.067 60.267V66.1386C204.053 75.8025 196.234 83.6215 186.584 83.6215Z"
-              fill="#FECD2C"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M45.5575 86.5118H5.93552C3.21206 86.5118 1.01572 88.7228 1.01572 91.4316V101.447C1.49891 101.286 2.01139 101.213 2.53851 101.213H18.7621C21.4856 101.213 23.6819 103.424 23.6819 106.132V115.899H45.5575C48.281 115.899 50.4773 113.688 50.4773 110.979V91.4316C50.4773 88.7228 48.2663 86.5118 45.5575 86.5118Z"
-              fill="#FECD2C"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M5.7441 103.617C5.7441 102.284 6.81298 101.215 8.14543 101.215H2.5228C1.99568 101.215 1.48319 101.303 1 101.449V110.982C1 113.705 3.21098 115.901 5.9198 115.901H23.6662V106.135C23.6662 106.091 23.6662 106.062 23.6662 106.018H8.14543C6.82762 106.018 5.7441 104.949 5.7441 103.617Z"
-              fill="#FECD2C"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M39.0845 95.6466C39.0845 94.5338 39.5824 93.5235 40.3584 92.8353C39.6995 92.2642 38.8503 91.9128 37.9132 91.9128C35.8486 91.9128 34.1794 93.582 34.1794 95.6466C34.1794 97.7112 35.8486 99.3804 37.9132 99.3804C38.8503 99.3804 39.7142 99.0289 40.3584 98.4579C39.5824 97.7697 39.0845 96.774 39.0845 95.6466Z"
-              fill="white"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M42.8197 91.9286C41.8826 91.9286 41.0187 92.28 40.3598 92.851C41.1359 93.5392 41.6337 94.5349 41.6337 95.6623C41.6337 96.7898 41.1359 97.7855 40.3598 98.4737C41.0187 99.0447 41.868 99.3961 42.8197 99.3961C44.8843 99.3961 46.5535 97.7269 46.5535 95.6623C46.5535 93.5978 44.8843 91.9286 42.8197 91.9286Z"
-              fill="white"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M40.3586 98.4588C41.0621 98.4588 41.6324 97.2002 41.6324 95.6475C41.6324 94.0949 41.0621 92.8362 40.3586 92.8362C39.655 92.8362 39.0847 94.0949 39.0847 95.6475C39.0847 97.2002 39.655 98.4588 40.3586 98.4588Z"
-              fill="white"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Path
-              d="M12.3486 90.8029C12.3486 91.4325 11.8361 91.9303 11.2212 91.9303H5.80351C5.17389 91.9303 4.67606 91.4178 4.67606 90.8029C4.67606 90.1732 5.18853 89.6754 5.80351 89.6754H11.2212C11.8508 89.6608 12.3486 90.1732 12.3486 90.8029Z"
-              fill="white"
-              stroke="black"
-              strokeWidth="0.439268"
-              strokeMiterlimit="10"
-            />
-            <Defs>
-              <LinearGradient
-                id="paint0_linear"
-                x1="140.287"
-                y1="188.319"
-                x2="152.203"
-                y2="197.466"
-                gradientUnits="userSpaceOnUse"
-              >
-                <Stop stopColor="#00A651" />
-                <Stop offset="1" stopColor="#005C35" />
-              </LinearGradient>
-              <LinearGradient
-                id="paint1_linear"
-                x1="153.614"
-                y1="88.0347"
-                x2="150.846"
-                y2="86.8704"
-                gradientUnits="userSpaceOnUse"
-              >
-                <Stop stopColor="#00A651" />
-                <Stop offset="1" stopColor="#005C35" />
-              </LinearGradient>
-              <LinearGradient
-                id="paint2_linear"
-                x1="103.187"
-                y1="48.3333"
-                x2="106.875"
-                y2="45.25"
-                gradientUnits="userSpaceOnUse"
-              >
-                <Stop stopColor="#00A651" />
-                <Stop offset="1" stopColor="#005C35" />
-              </LinearGradient>
-              <LinearGradient
-                id="paint3_linear"
-                x1="158.333"
-                y1="56.5"
-                x2="155.25"
-                y2="56.5"
-                gradientUnits="userSpaceOnUse"
-              >
-                <Stop stopColor="#00A651" />
-                <Stop offset="1" stopColor="#005C35" />
-              </LinearGradient>
-            </Defs>
-          </Svg>
+            className="w-[80%] h-full mx-auto mb-0  block"
+          />
         </View>
 
-        <Text className="text-2xl text-center font-semibold mt-16 w-[226px] mx-auto">
+        <Text className="text-2xl text-center font-semibold mt-0 w-[226px] mx-auto">
           Get your errands ran on time
         </Text>
         <View className="flex flex-row justify-center items-center mx-auto mt-8">
           <View className="block mr-2 h-[10px] w-[10px] rounded-full bg-slate-900" />
           <View className="block h-[10px] w-[10px] rounded-full bg-slate-200" />
         </View>
-        <View>
-          <Pressable
-            onPress={() => {
-              handleTabChange(1);
-            }}
-          >
-            <Image
-              source={require("../../assets/images/play.png")}
-              style={[{ resizeMode: "contain" }]}
-              className="w-full h-auto block mx-auto mt-8"
-            />
-          </Pressable>
+        <View className="absolute bottom-36 w-full">
+          <View className="mx-auto">
+            <AnimatedCircularProgress
+              ref={circularProgressRef}
+              duration={10000}
+              size={80}
+              width={10}
+              fill={fill}
+              tintColor="#00A651"
+              backgroundColor="white"
+              style={{ transform: [{ rotate: "90deg" }] }}
+            >
+              {(fill) => (
+                <Pressable
+                  onPress={() => {
+                    handleTabChange(1);
+                  }}
+                  className="w-[60px] h-[60px] rounded-full bg-black mx-auto flex flex-row items-center justify-center -rotate-90"
+                >
+                  <Ionicons
+                    name="chevron-forward-outline"
+                    style={[{ color: "white", fontSize: 30, margin: "auto" }]}
+                    className=""
+                  />
+                </Pressable>
+              )}
+            </AnimatedCircularProgress>
+          </View>
         </View>
       </View>
 
       {/* Onboard component 2 */}
-      <View className={activeTab === 1 ? "" : "hidden"}>
-        <Image
-          source={require("../../assets/images/image.png")}
-          style={[{ resizeMode: "contain" }]}
-          className="w-[80%]  mx-auto mb-0 -mt-4"
-        />
+      <View className={activeTab === 1 ? "relative h-[100vh]" : "hidden"}>
+        <View className="absolute top-0 bottom-0 my-0 w-full">
+          <Image
+            source={require("../../assets/images/image.png")}
+            style={[{ resizeMode: "contain" }]}
+            className="w-[80%] max-w-[400px]  mx-auto mb-0 -mt-4"
+          />
 
-        <Text className="text-2xl text-center font-semibold -mt-12 w-[226px] mx-auto">
-          Get items from your favorite local stores
-        </Text>
-        <View className="flex flex-row justify-center items-center mx-auto mt-8">
-          <View className="block mr-2 h-[10px] w-[10px] rounded-full bg-slate-200" />
-          <View className="block h-[10px] w-[10px] rounded-full bg-slate-900" />
+          <Text className="text-2xl text-center font-semibold -mt-12 w-[226px] mx-auto">
+            Get items from your favorite local stores
+          </Text>
+          <View className="flex flex-row justify-center items-center mx-auto mt-[32px]">
+            <View className="block mr-2 h-[10px] w-[10px] rounded-full bg-slate-200" />
+            <View className="block h-[10px] w-[10px] rounded-full bg-slate-900" />
+          </View>
         </View>
-        <View className="mt-8">
-          <Button_Lg title="Get Started" regular={true} onPress={() => {
-              router.replace("/auth/register")
-            }}/>
-        </View>
-        <View>
+        <View className="mt-8 absolute bottom-20 w-full">
+          <Button_Lg
+            title="Get Started"
+            regular={true}
+            onPress={() => {
+              router.push("/auth/register");
+            }}
+          />
           <TermsOfServiceText />
         </View>
       </View>
