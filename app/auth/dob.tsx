@@ -81,7 +81,7 @@ const Dob = () => {
       <View className="absolute w-full bottom-20">
         <Button_Lg
           title={"Continue"}
-          onPress={() => router.replace("/auth/dob")}
+          onPress={() => router.replace("/(tabs)")}
           regular={true}
         />
       </View>
