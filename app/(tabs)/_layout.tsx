@@ -1,7 +1,5 @@
 import { Tabs } from "expo-router";
 import React from "react";
-
-// import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
 import { Colors } from "@/constants/Colors";
