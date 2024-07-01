@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "dropoff_mobile_v1",
-    "slug": "dropoff_mobile_v1",
+    "name": "Dropoff",
+    "slug": "Dropoff",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
