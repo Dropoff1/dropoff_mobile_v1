@@ -1,11 +1,8 @@
 import { View, Text, TextInput, Image, TouchableHighlight } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-
 import { inputStyles } from "../../assets/styles/inputStyles";
 import Button_Lg from "../../components/shared/Button";
-import PrimaryInput from "../../components/shared/PrimaryInput";
-import TermsOfServiceText from "../../components/shared/TermsofService";
 
 const OTP = () => {
   const [email, setEmail] = useState("");

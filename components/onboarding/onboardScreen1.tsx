@@ -30,7 +30,7 @@ export default function OnboardScreen1() {
   };
 
   useEffect(() => {
-    let timeoutId;
+    let timeoutId:any;
 
     const startAnimation = async () => {
       if (activeTab === 0 && circularProgressRef.current) {

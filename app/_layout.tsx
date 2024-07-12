@@ -38,6 +38,7 @@ export default function RootLayout() {
         <Stack.Screen name="auth/register" options={{ headerShown: false }} />
         <Stack.Screen name="auth/otp" options={{ headerShown: false }} />
         <Stack.Screen name="auth/dob" options={{ headerShown: false }} />
+        <Stack.Screen name="auth/change-password" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
